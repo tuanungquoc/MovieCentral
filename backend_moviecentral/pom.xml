@@ -4,12 +4,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.cmpe273</groupId>
-	<artifactId>finalproject</artifactId>
+	<groupId>com.cmpe275</groupId>
+	<artifactId>backend_moviecentral</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>finalproject</name>
+	<name>backend_moviecentral</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
