@@ -41,7 +41,7 @@ public class MovieController {
 
 	@Autowired
 	MovieRepository repository;
-	
+
 	@Autowired
 	MovieDAL movieDAL;
 
@@ -49,7 +49,7 @@ public class MovieController {
 	public MovieDAL getMovieDAL() {
 		return new MovieDALImpl();
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	public Movie createProfile(HttpServletRequest request,@Valid @RequestBody Movie movie) {
 		movie.set_id(ObjectId.get());
@@ -59,15 +59,22 @@ public class MovieController {
 
 	@RequestMapping(value="/search", method = RequestMethod.POST)
 	public Page<Movie> searchMovie(@RequestBody Map<String, Object> payload) {
+
 		String keyword = (String) payload.get("search");
+		List<String> keywordList;
 		if(keyword == null) {
-			keyword = "";
+			keywordList = null;
 		}
-		String[] keys = keyword.split(" ");
-		int page = Integer.parseInt((String)payload.get("page"));
-		int size =  Integer.parseInt((String)payload.get("size"));
+		else {
+			String[] keys = keyword.split(" ");
+			keywordList = Arrays.asList(keys);
+		}
+		int page = (Integer) payload.get("page");
+		int size =   (Integer) payload.get("size");
 		Pageable pageable = new PageRequest(page,size);
-		return movieDAL.searchMovieByKeyWord(Arrays.asList(keys), pageable);
+		//checking to see filter is applied
+		Map<String, Object> filters = (Map) payload.get("filters");
+		return movieDAL.searchMovieByKeyWord(keywordList, pageable,filters);
 	}
-	
+
 }
