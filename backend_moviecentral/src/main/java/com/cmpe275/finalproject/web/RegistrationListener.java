@@ -12,9 +12,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.cmpe275.finalproject.domain.UserProfile;
-import com.cmpe275.finalproject.domain.VerificationToken;
-import com.cmpe275.finalproject.domain.VerificationTokenRepository;
+import com.cmpe275.finalproject.domain.users.UserProfile;
+import com.cmpe275.finalproject.domain.users.VerificationToken;
+import com.cmpe275.finalproject.domain.users.VerificationTokenRepository;
 import com.cmpe275.finalproject.errorhandling.UserNotFoundException;
 import com.cmpe275.finalproject.service.IUserProfileService;
 

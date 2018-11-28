@@ -1,4 +1,4 @@
-package com.cmpe275.finalproject.domain;
+package com.cmpe275.finalproject.domain.movie;
 
 import java.util.List;
 import java.util.Map;

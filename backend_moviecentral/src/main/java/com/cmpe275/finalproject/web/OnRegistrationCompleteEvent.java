@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import org.springframework.context.ApplicationEvent;
 
-import com.cmpe275.finalproject.domain.UserProfile;
+import com.cmpe275.finalproject.domain.users.UserProfile;
 
 public class OnRegistrationCompleteEvent extends ApplicationEvent {
 	private String appUrl;

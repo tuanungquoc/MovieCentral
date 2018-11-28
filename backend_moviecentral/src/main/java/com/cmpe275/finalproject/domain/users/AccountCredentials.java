@@ -1,6 +1,7 @@
-package com.cmpe275.finalproject.domain;
+package com.cmpe275.finalproject.domain.users;
 
 public class AccountCredentials {
+	
 	private String username;
 	private String password;
 	
@@ -16,4 +17,5 @@ public class AccountCredentials {
 	public void setPassword(String password) {
 		this.password = password;
 	}  
+	
 }

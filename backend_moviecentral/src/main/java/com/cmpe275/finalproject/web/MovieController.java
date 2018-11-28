@@ -10,32 +10,26 @@ import javax.validation.Valid;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.WebRequest;
 
-import com.cmpe275.finalproject.domain.Movie;
-import com.cmpe275.finalproject.domain.MovieDAL;
-import com.cmpe275.finalproject.domain.MovieDALImpl;
-import com.cmpe275.finalproject.domain.MovieRepository;
-import com.cmpe275.finalproject.domain.UserProfile;
-import com.cmpe275.finalproject.domain.UserProfileRepository;
-import com.cmpe275.finalproject.domain.VerificationToken;
+import com.cmpe275.finalproject.domain.movie.Movie;
+import com.cmpe275.finalproject.domain.movie.MovieDAL;
+import com.cmpe275.finalproject.domain.movie.MovieDALImpl;
+import com.cmpe275.finalproject.domain.movie.MovieRepository;
 import com.cmpe275.finalproject.errorhandling.UserNotFoundException;
+import org.springframework.http.ResponseEntity;
+
 
 @RestController
-@RequestMapping("/movie")
 public class MovieController {
 
 
@@ -50,14 +44,14 @@ public class MovieController {
 		return new MovieDALImpl();
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value="/admin/movie",method = RequestMethod.POST)
 	public Movie createProfile(HttpServletRequest request,@Valid @RequestBody Movie movie) {
 		movie.set_id(ObjectId.get());
 		repository.save(movie);
 		return movie;
 	}
 
-	@RequestMapping(value="/search", method = RequestMethod.POST)
+	@RequestMapping(value="/movie/search", method = RequestMethod.POST)
 	public Page<Movie> searchMovie(@RequestBody Map<String, Object> payload) {
 
 		String keyword = (String) payload.get("search");
@@ -77,4 +71,32 @@ public class MovieController {
 		return movieDAL.searchMovieByKeyWord(keywordList, pageable,filters);
 	}
 
+	@RequestMapping(value="/movie/{id}", method = RequestMethod.GET)
+	public Movie getMovieById(@PathVariable("id") ObjectId _id) {
+		Movie movie =  repository.findBy_id(_id);
+		if(movie != null) return movie;
+		throw new UserNotFoundException("id-" + _id);	
+	}
+	
+	@RequestMapping(value="/admin/movie/{id}", method = RequestMethod.DELETE)
+	public Movie deleteMovieById(@PathVariable("id") ObjectId _id) {
+		Movie movie =  repository.findBy_id(_id);
+		repository.deleteById(_id.toString());
+		if(movie != null) return movie;
+		throw new UserNotFoundException("id-" + _id);	
+	}
+	
+	@RequestMapping(value="/admin/movie/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Object> updateMovie(@RequestBody Movie movie,@PathVariable("id") ObjectId _id) {
+		Movie movieOptional = repository.findBy_id(_id);
+
+		if (movieOptional == null)
+			return ResponseEntity.notFound().build();
+
+		movie.set_id(_id);
+	
+		repository.save(movie);
+
+		return ResponseEntity.ok(movie);
+	}
 }

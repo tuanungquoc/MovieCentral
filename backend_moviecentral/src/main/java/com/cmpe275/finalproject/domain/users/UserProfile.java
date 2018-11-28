@@ -1,4 +1,4 @@
-package com.cmpe275.finalproject.domain;
+package com.cmpe275.finalproject.domain.users;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;

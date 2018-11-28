@@ -7,10 +7,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cmpe275.finalproject.domain.UserProfile;
-import com.cmpe275.finalproject.domain.UserProfileRepository;
-import com.cmpe275.finalproject.domain.VerificationToken;
-import com.cmpe275.finalproject.domain.VerificationTokenRepository;
+import com.cmpe275.finalproject.domain.users.UserProfile;
+import com.cmpe275.finalproject.domain.users.UserProfileRepository;
+import com.cmpe275.finalproject.domain.users.VerificationToken;
+import com.cmpe275.finalproject.domain.users.VerificationTokenRepository;
 
 @Service
 @Transactional

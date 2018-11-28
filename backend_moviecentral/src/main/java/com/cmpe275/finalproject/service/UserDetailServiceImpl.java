@@ -7,8 +7,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.cmpe275.finalproject.domain.UserProfile;
-import com.cmpe275.finalproject.domain.UserProfileRepository;
+import com.cmpe275.finalproject.domain.users.UserProfile;
+import com.cmpe275.finalproject.domain.users.UserProfileRepository;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

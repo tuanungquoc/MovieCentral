@@ -1,13 +1,21 @@
 package com.cmpe275.finalproject.service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
+import org.apache.catalina.startup.ClassLoaderFactory.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+
+import com.cmpe275.finalproject.domain.users.UserProfileRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.List;
 
 import static java.util.Collections.emptyList;
 
@@ -16,9 +24,13 @@ public class AuthenticationService {
   static final String SIGNINGKEY = "SecretKey";
   static final String PREFIX = "Bearer";
 
-  static public void addToken(HttpServletResponse res, String username) {
+ 
+  
+  static public void addToken(HttpServletResponse res, String username, List<String> roles) {
+	//get the roles of user
     String JwtToken = Jwts.builder().setSubject(username)
         .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
+        .claim("role", roles.toString())
         .signWith(SignatureAlgorithm.HS512, SIGNINGKEY)
         .compact();
     res.addHeader("Authorization", PREFIX + " " + JwtToken);
@@ -28,14 +40,22 @@ public class AuthenticationService {
   static public Authentication getAuthentication(HttpServletRequest request) {
     String token = request.getHeader("Authorization");
     if (token != null) {
-      String user = Jwts.parser()
-          .setSigningKey(SIGNINGKEY)
-          .parseClaimsJws(token.replace(PREFIX, ""))
-          .getBody()
-          .getSubject();
+    Claims claims = Jwts.parser()         
+    		       .setSigningKey(SIGNINGKEY)
+    		       .parseClaimsJws(token.replace(PREFIX, "")).getBody();
 
-      if (user != null) 
-    	  return new UsernamePasswordAuthenticationToken(user, null, emptyList());
+    
+      String user = claims.getSubject();
+      String roles = (String)claims.get("role");
+      
+      if (user != null) { 
+    	  //Checking request url with role
+    	 if(roles.contains("ADMIN")) {
+    		 return new UsernamePasswordAuthenticationToken(user, null, emptyList());
+    	 }else if (!request.getRequestURI().contains("/admin")) {
+    		 return new UsernamePasswordAuthenticationToken(user, null, emptyList());
+    	 }
+      }
     }
     return null;
   }

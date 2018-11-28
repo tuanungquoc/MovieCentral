@@ -1,4 +1,4 @@
-package com.cmpe275.finalproject.domain;
+package com.cmpe275.finalproject.domain.movie;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;

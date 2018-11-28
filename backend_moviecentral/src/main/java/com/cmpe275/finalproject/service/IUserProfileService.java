@@ -1,7 +1,7 @@
 package com.cmpe275.finalproject.service;
 
-import com.cmpe275.finalproject.domain.UserProfile;
-import com.cmpe275.finalproject.domain.VerificationToken;
+import com.cmpe275.finalproject.domain.users.UserProfile;
+import com.cmpe275.finalproject.domain.users.VerificationToken;
 
 public interface IUserProfileService {
 	
