@@ -16,12 +16,25 @@ public class VerificationToken {
 	
 	private ObjectId userId;
 	
+	private boolean isValid;
+	
+	
+
 	public VerificationToken(ObjectId _id, String token, ObjectId userId) {
 		this._id = _id;
 		this.token = token;
 		this.userId = userId;
+		this.isValid = true;
 	}
 
+	public boolean isValid() {
+		return isValid;
+	}
+
+	public void setValid(boolean isValid) {
+		this.isValid = isValid;
+	}
+	
 	public ObjectId get_id() {
 		return _id;
 	}

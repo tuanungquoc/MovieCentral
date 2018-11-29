@@ -6,6 +6,5 @@ import org.springframework.data.repository.query.Param;
 
 public interface VerificationTokenRepository extends MongoRepository<VerificationToken,String>{
 	VerificationToken findBy_id(ObjectId _id);
-	VerificationToken findByToken(@Param("token") String token);
-	
+	VerificationToken findByToken(@Param("token") String token);	
 }

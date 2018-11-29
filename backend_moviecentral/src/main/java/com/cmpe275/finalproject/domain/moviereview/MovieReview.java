@@ -13,7 +13,7 @@ public class MovieReview {
 	@Id
 	public ObjectId _id;
 	
-	public ObjectId cusomterId;
+	public ObjectId customerId;
 	
 	public ObjectId movieId;
 	
@@ -23,24 +23,24 @@ public class MovieReview {
 	
 	public Date created;
 	
-	public ObjectId get_id() {
-		return _id;
+	public String get_id() {
+		return _id.toString();
 	}
 
 	public void set_id(ObjectId _id) {
 		this._id = _id;
 	}
 
-	public ObjectId getCusomterId() {
-		return cusomterId;
+	public String getCustomerId() {
+		return customerId.toString();
 	}
 
-	public void setCusomterId(ObjectId cusomterId) {
-		this.cusomterId = cusomterId;
+	public void setCustomerId(ObjectId customerId) {
+		this.customerId = customerId;
 	}
 
-	public ObjectId getMovieId() {
-		return movieId;
+	public String getMovieId() {
+		return movieId.toString();
 	}
 
 	public void setMovieId(ObjectId movieId) {

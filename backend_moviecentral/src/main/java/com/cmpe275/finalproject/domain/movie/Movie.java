@@ -32,14 +32,14 @@ public class Movie {
 	
 	private String country;
 	
-	private String rating;
+	private float rating;
 	
 	private String availability;
 	
 	private double price;
 	
-	public ObjectId get_id() {
-		return _id;
+	public String get_id() {
+		return _id.toString();
 	}
 
 	public void set_id(ObjectId _id) {
@@ -126,11 +126,11 @@ public class Movie {
 		this.country = country;
 	}
 
-	public String getRating() {
+	public float getRating() {
 		return rating;
 	}
 
-	public void setRating(String rating) {
+	public void setRating(float rating) {
 		this.rating = rating;
 	}
 

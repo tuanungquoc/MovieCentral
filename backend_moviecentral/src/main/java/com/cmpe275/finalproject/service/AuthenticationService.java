@@ -19,6 +19,8 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 
+import java.io.IOException;
+
 public class AuthenticationService {
   static final long EXPIRATIONTIME = 864_000_00; // 1 day in milliseconds
   static final String SIGNINGKEY = "SecretKey";
@@ -26,15 +28,22 @@ public class AuthenticationService {
 
  
   
-  static public void addToken(HttpServletResponse res, String username, List<String> roles) {
+  static public void addToken(HttpServletResponse res, String username, List<String> roles) throws IOException {
 	//get the roles of user
     String JwtToken = Jwts.builder().setSubject(username)
         .setExpiration(new Date(System.currentTimeMillis() + EXPIRATIONTIME))
-        .claim("role", roles.toString())
+        .claim("role", roles.get(0))
         .signWith(SignatureAlgorithm.HS512, SIGNINGKEY)
         .compact();
     res.addHeader("Authorization", PREFIX + " " + JwtToken);
 	res.addHeader("Access-Control-Expose-Headers", "Authorization");
+	res.setContentType("application/json");
+    res.setCharacterEncoding("UTF-8");
+    res.getWriter().write(
+            "{\"" + "JWTToken" + "\":\"" + PREFIX + " " + JwtToken + "\","
+            		+ "\"role\":\"" + roles.get(0) + "\","
+            		+ "\"isEnabled\":" + Boolean.parseBoolean(roles.get(1))+ "}"
+    );
   }
 
   static public Authentication getAuthentication(HttpServletRequest request) {

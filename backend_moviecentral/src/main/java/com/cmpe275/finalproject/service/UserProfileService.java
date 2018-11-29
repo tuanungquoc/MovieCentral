@@ -41,15 +41,17 @@ public class UserProfileService implements IUserProfileService {
 	}
 
 	@Override
-	public void saveRegisteredUser(UserProfile userProfile) {
+	public void saveRegisteredUser(UserProfile userProfile, VerificationToken token) {
 		repository.save(userProfile);
+		if(token !=null)
+			tokenRepository.save(token);
 
 	}
 
 	@Override
 	public void createVerificationToken(UserProfile user, String token) {
 		// TODO Auto-generated method stub
-		VerificationToken myToken = new VerificationToken(null, token, user.get_id());
+		VerificationToken myToken = new VerificationToken(null, token, new ObjectId(user.get_id()));
 		myToken.set_id(ObjectId.get());
 		tokenRepository.save(myToken);
 	}

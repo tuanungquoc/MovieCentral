@@ -16,9 +16,20 @@ public class UserProfile {
 	
 	private String password;
 	
+	private String profileName;
+	
+
 	private boolean enabled;
 	
 	private String role;
+	
+	public UserProfile(ObjectId _id, String username, String password) {
+		this._id = _id;
+		this.username = username;
+		this.password = password;
+		this.enabled = false;
+		this.role = "USER";
+	}
 	
 	public String getRole() {
 		return role;
@@ -36,16 +47,8 @@ public class UserProfile {
 		this.enabled = enabled;
 	}
 
-	public UserProfile(ObjectId _id, String username, String password) {
-		this._id = _id;
-		this.username = username;
-		this.password = password;
-		this.enabled = false;
-		this.role = "USER";
-	}
-
-	public ObjectId get_id() {
-		return _id;
+	public String get_id() {
+		return _id.toString();
 	}
 
 	public void set_id(ObjectId _id) {
@@ -68,7 +71,13 @@ public class UserProfile {
 		this.password = password;
 	}
 	
-	
+	public String getProfileName() {
+		return profileName;
+	}
+
+	public void setProfileName(String profileName) {
+		this.profileName = profileName;
+	}
 	
 	
 }

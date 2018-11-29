@@ -28,7 +28,6 @@ import com.cmpe275.finalproject.domain.movie.MovieRepository;
 import com.cmpe275.finalproject.errorhandling.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
 
-
 @RestController
 public class MovieController {
 

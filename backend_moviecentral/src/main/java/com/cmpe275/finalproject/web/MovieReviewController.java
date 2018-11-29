@@ -2,6 +2,7 @@ package com.cmpe275.finalproject.web;
 
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,9 @@ public class MovieReviewController {
 	MovieReviewRepository repository;
 
 	@Autowired
+	MovieRepository movieRepository;
+	
+	@Autowired
 	MovieReviewDAL movieReviewDAL;
 
 	@Bean
@@ -50,9 +54,17 @@ public class MovieReviewController {
 
 	@RequestMapping(value="/review",method = RequestMethod.POST)
 	public MovieReview createReview(@RequestBody MovieReview review) {
-		review.set_id(ObjectId.get());
-		repository.save(review);
-		return review;
+		//checking to see if user already posted a review
+		MovieReview existingReview = repository.findByCustomerIdAndMovieId(new ObjectId(review.getCustomerId()),
+				new ObjectId(review.getMovieId()));
+		if(existingReview != null ) {
+			return null;
+		}else {
+			review.set_id(ObjectId.get());
+			review.setCreated(new Date());
+			repository.save(review);
+			return review;
+		}
 	}
 
 	@RequestMapping(value="/review/retrieve", method = RequestMethod.POST)

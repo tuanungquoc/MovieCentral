@@ -43,16 +43,16 @@ ApplicationListener<OnRegistrationCompleteEvent> {
 
 	private void confirmRegistration(OnRegistrationCompleteEvent event) {
 		UserProfile userProfile = event.getUserProfile();
-		String tokenStr = UUID.randomUUID().toString();
-		service.createVerificationToken(userProfile, tokenStr);
+	
 		try {
 			userProfile.setPassword(bCryptPasswordEncoder.encode(userProfile.getPassword()));
-			service.saveRegisteredUser(userProfile);
-			
+			service.saveRegisteredUser(userProfile,null);
+			String tokenStr = UUID.randomUUID().toString();
+			service.createVerificationToken(userProfile, tokenStr);
 			String recipientAddress = userProfile.getUsername();
 			String subject = "Registration Confirmation";
 			String confirmationUrl 
-			= event.getAppUrl() + "/regitrationConfirm?token=" + tokenStr;
+			= event.getAppUrl() + "/userprofile/regitrationConfirm?token=" + tokenStr;
 			//String message = messages.getMessage("message.regSucc", null, event.getLocale());
 	
 			SimpleMailMessage email = new SimpleMailMessage();

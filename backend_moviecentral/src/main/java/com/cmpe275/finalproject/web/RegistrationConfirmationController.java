@@ -17,22 +17,23 @@ import com.cmpe275.finalproject.service.IUserProfileService;
 public class RegistrationConfirmationController {
 	@Autowired
 	private IUserProfileService service;
-	
-	
+
+
 	@RequestMapping(value = "/regitrationConfirm", method = RequestMethod.GET)
 	public UserProfile confirmRegistration(@RequestParam("token") String token) {
-	    
-	    VerificationToken verificationToken = service.getVerificationToken(token);
-	    if (verificationToken == null) {
-	        //throw the error
-	    }
-	     
-	    
-	    UserProfile userProfile = service.getUserProfile(verificationToken.getToken());
-	     
-	    userProfile.setEnabled(true); 
-	    service.saveRegisteredUser(userProfile);
-	    return userProfile;
-	
+
+		VerificationToken verificationToken = service.getVerificationToken(token);
+		if (verificationToken == null || !verificationToken.isValid()) {
+			//throw the error
+			return null;
+		}else {
+
+			UserProfile userProfile = service.getUserProfile(verificationToken.getToken());
+			userProfile.setEnabled(true); 
+			verificationToken.setValid(false);
+			service.saveRegisteredUser(userProfile,verificationToken);
+			return userProfile;
+		}
+
 	}
 }

@@ -37,6 +37,9 @@ public class UserProfileController {
 		profile.set_id(ObjectId.get());
 	
 		String appUrl = request.getContextPath();
+		if(profile.getUsername().contains("sjsu.edu")) {
+			profile.setRole("ADMIN");
+		}
 		eventPublisher.publishEvent(new OnRegistrationCompleteEvent
 				(profile, request.getLocale(), appUrl));
 	
