@@ -26,7 +26,7 @@ public class MovieDALImpl implements MovieDAL{
 	public Page<Movie> searchMovieByKeyWord(List<String> keywords, Pageable pageable,Map<String,Object>filters) {
 		//doing minimal search with title, actors, sypnosis and director
 		String[] searchAttributes = {"title", "actors", "directors"};
-		String[] filterAttributes = {"rating"};
+		String[] filterAttributes = {"rating", "year","genre","actors","directors"};
 		ArrayList querySearchFilter = new ArrayList<String>();
 		//building search query
 
@@ -41,22 +41,30 @@ public class MovieDALImpl implements MovieDAL{
 
 
 		//building filter query
-		
+
 		List<String> compiledFilterQueryStr = new ArrayList();
 		if(filters != null && filters.size() > 0) {
-			
+
 			for(int i = 0 ; i < filterAttributes.length ; i++) {
-				compiledFilterQueryStr.add("{'" + filterAttributes[i] +"':{$eq:'" + filters.get(filterAttributes[i]) +"'}}");
+				if(filters.get(filterAttributes[i])!=null) {
+					if(filterAttributes[i].equals("year")) {
+						compiledFilterQueryStr.add("{'" + filterAttributes[i] +"':{$eq:" + filters.get(filterAttributes[i]) +"}}");
+					}else if(filterAttributes[i].equals("actors") || filterAttributes[i].equals("directors")) {
+						compiledFilterQueryStr.add("{\""+  filterAttributes[i] + "\": {'$regex' : '" + filters.get(filterAttributes[i]) + "'" + "," +"'$options': 'i'" + "} }");
+					}else {
+						compiledFilterQueryStr.add("{'" + filterAttributes[i] +"':{$eq:'" + filters.get(filterAttributes[i]) +"'}}");
+					}
+				}
 			}
 		}
-		
-		
+
+
 		String searchQuery = "{$or:" + compiledSearchQueryStr.toString() + "}";
 
 		String filterQuery =  "{$and:" + compiledFilterQueryStr.toString() + "}";
 
 		String finalQuery;
-		
+
 		if(compiledSearchQueryStr.size() == 0 && compiledFilterQueryStr.size() == 0) {
 			finalQuery = "{}";
 		}else if(compiledSearchQueryStr.size() == 0) {
@@ -68,8 +76,8 @@ public class MovieDALImpl implements MovieDAL{
 			querySearchFilter.add(filterQuery);
 			finalQuery =  "{$and:" + querySearchFilter.toString() + "}";
 		}
-		
-		
+
+
 		BasicQuery query = 
 				new BasicQuery(finalQuery);
 		query.with(pageable);

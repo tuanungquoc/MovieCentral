@@ -32,7 +32,7 @@ public class Movie {
 	
 	private String country;
 	
-	private float rating;
+	private String rating;
 	
 	private String availability;
 	
@@ -126,11 +126,11 @@ public class Movie {
 		this.country = country;
 	}
 
-	public float getRating() {
+	public String getRating() {
 		return rating;
 	}
 
-	public void setRating(float rating) {
+	public void setRating(String rating) {
 		this.rating = rating;
 	}
 
