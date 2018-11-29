@@ -63,7 +63,16 @@ public class MovieReviewController {
 			review.set_id(ObjectId.get());
 			review.setCreated(new Date());
 			repository.save(review);
+			// update numberOfStar of the movie
+			Movie movie = movieRepository.findBy_id(new ObjectId(review.getMovieId()));
+			int numberOfReviewer = movie.getNumberOfReviewers();
+			float numberOfStars = movie.getNumberOfStars();
+			movie.setNumberOfReviewers(numberOfReviewer +1);
+			float ave = ((numberOfStars * numberOfReviewer) + review.getReviewRate())/(numberOfReviewer + 1);
+			movie.setNumberOfStars((int)ave);
+			movieRepository.save(movie);
 			return review;
+			
 		}
 	}
 

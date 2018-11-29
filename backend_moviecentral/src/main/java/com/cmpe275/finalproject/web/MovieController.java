@@ -46,6 +46,8 @@ public class MovieController {
 	@RequestMapping(value="/admin/movie",method = RequestMethod.POST)
 	public Movie createProfile(HttpServletRequest request,@Valid @RequestBody Movie movie) {
 		movie.set_id(ObjectId.get());
+		movie.setNumberOfReviewers(0);
+		movie.setNumberOfStars(0);
 		repository.save(movie);
 		return movie;
 	}

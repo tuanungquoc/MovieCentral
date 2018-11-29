@@ -38,6 +38,28 @@ public class Movie {
 	
 	private double price;
 	
+	private int numberOfReviewers;
+
+	private int numberOfStars;
+
+	
+	public int getNumberOfReviewers() {
+		return numberOfReviewers;
+	}
+
+	public void setNumberOfReviewers(int numberOfReviewers) {
+		this.numberOfReviewers = numberOfReviewers;
+	}
+
+	public int getNumberOfStars() {
+		return numberOfStars;
+	}
+
+	public void setNumberOfStars(int numberOfStars) {
+		this.numberOfStars = numberOfStars;
+	}
+
+
 	public String get_id() {
 		return _id.toString();
 	}

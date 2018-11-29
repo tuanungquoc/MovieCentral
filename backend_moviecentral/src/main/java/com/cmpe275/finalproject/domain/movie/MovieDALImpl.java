@@ -26,7 +26,7 @@ public class MovieDALImpl implements MovieDAL{
 	public Page<Movie> searchMovieByKeyWord(List<String> keywords, Pageable pageable,Map<String,Object>filters) {
 		//doing minimal search with title, actors, sypnosis and director
 		String[] searchAttributes = {"title", "actors", "directors"};
-		String[] filterAttributes = {"rating", "year","genre","actors","directors"};
+		String[] filterAttributes = {"rating", "year","genre","actors","directors","numberOfStars"};
 		ArrayList querySearchFilter = new ArrayList<String>();
 		//building search query
 
@@ -47,11 +47,11 @@ public class MovieDALImpl implements MovieDAL{
 
 			for(int i = 0 ; i < filterAttributes.length ; i++) {
 				if(filters.get(filterAttributes[i])!=null) {
-					if(filterAttributes[i].equals("year")) {
+					if(filterAttributes[i].equals("year") || filterAttributes[i].equals("numberOfStars")) {
 						compiledFilterQueryStr.add("{'" + filterAttributes[i] +"':{$eq:" + filters.get(filterAttributes[i]) +"}}");
 					}else if(filterAttributes[i].equals("actors") || filterAttributes[i].equals("directors")) {
 						compiledFilterQueryStr.add("{\""+  filterAttributes[i] + "\": {'$regex' : '" + filters.get(filterAttributes[i]) + "'" + "," +"'$options': 'i'" + "} }");
-					}else {
+					}else{
 						compiledFilterQueryStr.add("{'" + filterAttributes[i] +"':{$eq:'" + filters.get(filterAttributes[i]) +"'}}");
 					}
 				}
