@@ -1,5 +1,6 @@
 package com.cmpe275.finalproject.web;
 
+import java.util.Date;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import com.cmpe275.finalproject.domain.users.UserProfile;
 import com.cmpe275.finalproject.domain.users.UserProfileRepository;
 import com.cmpe275.finalproject.domain.users.VerificationToken;
 import com.cmpe275.finalproject.errorhandling.UserNotFoundException;
+import com.cmpe275.finalproject.order.Order;
 
 @RestController
 @RequestMapping("/userprofile")
@@ -55,4 +57,18 @@ public class UserProfileController {
 		throw new UserNotFoundException("id-" + _id);	
 	}
 	
+//	@RequestMapping(value="/subcribed",method = RequestMethod.POST)
+//	public UserProfile subcribeProfile(@RequestBody SubcribedPayment payment) {
+//		UserProfile profile = repository.findBy_id(payment.getUserId());
+//		if(profile != null) {
+//			int totalMonths = payment.getTotal() / 10;
+//			if(totalMonths > 0) {
+//				if(profile.getNextRenewalDate() == null) {
+//					Date currentDate = new Date();
+//					currentDate.a
+//				}
+//			}
+//		}
+//		return profile;
+//	}
 }

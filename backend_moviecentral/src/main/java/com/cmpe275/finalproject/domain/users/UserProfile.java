@@ -1,5 +1,8 @@
 package com.cmpe275.finalproject.domain.users;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -23,11 +26,34 @@ public class UserProfile {
 	
 	private String role;
 	
+	private boolean isSubcribed;
+	
+	private LocalDateTime nextRenewalDate;
+	
+	public boolean isSubcribed() {
+		return isSubcribed;
+	}
+
+	public void setSubcribed(boolean isSubcribed) {
+		this.isSubcribed = isSubcribed;
+	}
+
+	public LocalDateTime getNextRenewalDate() {
+		return nextRenewalDate;
+	}
+
+	public void setNextRenewalDate(LocalDateTime nextRenewalDate) {
+		this.nextRenewalDate = nextRenewalDate;
+	}
+
+	
 	public UserProfile(ObjectId _id, String username, String password) {
 		this._id = _id;
 		this.username = username;
 		this.password = password;
 		this.enabled = false;
+		this.isSubcribed = false;
+		this.nextRenewalDate = null;
 		this.role = "USER";
 	}
 	
