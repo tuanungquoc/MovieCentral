@@ -42,7 +42,8 @@ public class AuthenticationService {
     res.getWriter().write(
             "{\"" + "JWTToken" + "\":\"" + PREFIX + " " + JwtToken + "\","
             		+ "\"role\":\"" + roles.get(0) + "\","
-            		+ "\"isEnabled\":" + Boolean.parseBoolean(roles.get(1))+ "}"
+            		+ "\"isEnabled\":" + Boolean.parseBoolean(roles.get(1)) + ","
+            		+ "\"profileName\":\"" + roles.get(2) + "\"}"
     );
   }
 

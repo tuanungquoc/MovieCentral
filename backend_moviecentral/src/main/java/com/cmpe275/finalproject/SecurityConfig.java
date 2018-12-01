@@ -28,15 +28,16 @@ import com.cmpe275.finalproject.service.UserDetailServiceImpl;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	public static final String SIGN_UP_URL = "/userprofile/**";
+	public static final String[] WHITELISTED = {"/userprofile/**", "/login"};
 
 
 
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		String [] whiteListed = {SIGN_UP_URL};
-		web.ignoring().antMatchers(whiteListed);
-	}
+//	@Override
+//	public void configure(WebSecurity web) throws Exception {
+//		String [] whiteListed = {SIGN_UP_URL};
+//		web.ignoring().antMatchers(whiteListed);
+//		
+//	}
 
 	//	@Autowired
 	//	private UserDetailServiceImpl userDetailsService; 
@@ -58,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().cors().and().authorizeRequests()
-		.antMatchers(HttpMethod.POST, "/login").permitAll()
+		.antMatchers( WHITELISTED).permitAll()
 		.anyRequest().authenticated()
 		.and()
 		// Filter for the api/login requests
@@ -82,6 +83,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		source.registerCorsConfiguration("/**", config);
 		return source;
 	}	
+
+
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
