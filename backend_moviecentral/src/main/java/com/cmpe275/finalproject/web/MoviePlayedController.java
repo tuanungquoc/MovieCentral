@@ -27,6 +27,7 @@ import com.cmpe275.finalproject.domain.movie.MovieDAL;
 import com.cmpe275.finalproject.domain.movie.MovieDALImpl;
 import com.cmpe275.finalproject.domain.movie.MovieRepository;
 import com.cmpe275.finalproject.domain.movieplayed.MoviePlayed;
+import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedBadRequest;
 import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedDAL;
 import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedDALImpl;
 import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedRepository;
@@ -121,7 +122,12 @@ public class MoviePlayedController {
 			//check if the user is still subribal
 			if(user.getNextRenewalDate() == null || user.getNextRenewalDate().compareTo(LocalDateTime.now()) < 0) {
 				//user need to pay for subcription
-				return ResponseEntity.badRequest().body("Need to subcribed");
+				MoviePlayedBadRequest badRequest = new MoviePlayedBadRequest();
+				badRequest.setMovieId(movie.get_id());
+				badRequest.setTotal(10);
+				badRequest.setSubribed(false);
+				badRequest.setTypeOfMovie(movie.getAvailability());
+				return ResponseEntity.badRequest().body(badRequest);
 			}
 			trackMoviePlayed(moviePlayed);
 			return ResponseEntity.ok().build();
@@ -130,7 +136,22 @@ public class MoviePlayedController {
 				trackMoviePlayed(moviePlayed);
 				return ResponseEntity.ok().build();
 			}
-			return ResponseEntity.badRequest().body("Need to pay");
+			MoviePlayedBadRequest badRequest = new MoviePlayedBadRequest();
+			badRequest.setMovieId(movie.get_id());
+			//regular user paying full price
+			if(user.getNextRenewalDate() == null )
+				badRequest.setTotal(movie.getPrice());
+			else {
+				if(user.getNextRenewalDate().compareTo(LocalDateTime.now()) < 0) {
+					badRequest.setTotal(movie.getPrice());
+				}else {
+					badRequest.setTotal(movie.getPrice() / 2);
+				}
+			}
+			badRequest.setTotal(movie.getPrice());
+			badRequest.setSubribed(false);
+			badRequest.setTypeOfMovie(movie.getAvailability());
+			return ResponseEntity.badRequest().body(badRequest);
 		}else {
 			trackMoviePlayed(moviePlayed);
 			return ResponseEntity.ok().build();
