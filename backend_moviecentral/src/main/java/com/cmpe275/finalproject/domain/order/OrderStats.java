@@ -1,4 +1,4 @@
-package com.cmpe275.finalproject.order;
+package com.cmpe275.finalproject.domain.order;
 
 public class OrderStats {
 	String typeOfPayment;

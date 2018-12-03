@@ -1,4 +1,4 @@
-package com.cmpe275.finalproject.order;
+package com.cmpe275.finalproject.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -34,16 +34,16 @@ public class Order {
 	
 	private ObjectId movieId;
 
-	public ObjectId get_id() {
-		return _id;
+	public String get_id() {
+		return _id.toString();
 	}
 
 	public void set_id(ObjectId _id) {
 		this._id = _id;
 	}
 
-	public ObjectId getUserId() {
-		return userId;
+	public String getUserId() {
+		return userId.toString();
 	}
 
 	public void setUserId(ObjectId userId) {
@@ -90,8 +90,8 @@ public class Order {
 		this.typeOfPayment = typeOfPayment;
 	}
 
-	public ObjectId getMovieId() {
-		return movieId;
+	public String getMovieId() {
+		return movieId.toString();
 	}
 
 	public void setMovieId(ObjectId movieId) {

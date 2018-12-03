@@ -26,14 +26,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cmpe275.finalproject.domain.order.Order;
+import com.cmpe275.finalproject.domain.order.OrderDAL;
+import com.cmpe275.finalproject.domain.order.OrderDALImpl;
+import com.cmpe275.finalproject.domain.order.OrderRepository;
+import com.cmpe275.finalproject.domain.order.OrderStats;
+import com.cmpe275.finalproject.domain.order.PaymentInfoRepository;
 import com.cmpe275.finalproject.domain.users.UserProfile;
 import com.cmpe275.finalproject.domain.users.UserProfileRepository;
-import com.cmpe275.finalproject.order.Order;
-import com.cmpe275.finalproject.order.OrderDAL;
-import com.cmpe275.finalproject.order.OrderDALImpl;
-import com.cmpe275.finalproject.order.OrderRepository;
-import com.cmpe275.finalproject.order.OrderStats;
-import com.cmpe275.finalproject.order.PaymentInfoRepository;
 
 import org.springframework.http.ResponseEntity;
 
@@ -62,7 +62,7 @@ public class PaymentController {
 		if(order.getQuantity() != 0) {
 			//Save payment
 
-			ObjectId cusomterId = order.getUserId();
+			ObjectId cusomterId = new ObjectId(order.getUserId());
 			UserProfile user = userRepository.findBy_id(cusomterId);
 			if(user!=null) {
 				LocalTime midnight = LocalTime.MIDNIGHT;
@@ -122,9 +122,11 @@ public class PaymentController {
 	
 	@RequestMapping(value="/admin/finance/yearly", method = RequestMethod.GET)
 	public ResponseEntity<Object> getFinanceByMonth() {
-		int month = LocalDateTime.now().getMonthValue();
-		int year = LocalDateTime.now().getYear();
-		List<OrderStats> orders = orderDAL.getStatsFinanceByMonthAndYear(year,month);
+		int cmonth = LocalDateTime.now().getMonthValue();
+		int cyear = LocalDateTime.now().getYear();
+		int lmonth = LocalDateTime.now().minusMonths(12).getMonthValue();
+		int lyear = LocalDateTime.now().minusMonths(12).getYear();
+		List<OrderStats> orders = orderDAL.getStatsFinanceByLast12Months(lyear,lmonth);
 				//findByDateBetween(LocalDateTime.now().getYear(),month);
 		
 	

@@ -1,4 +1,4 @@
-package com.cmpe275.finalproject.order;
+package com.cmpe275.finalproject.domain.order;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -50,8 +50,8 @@ public class PaymentInfo {
 		this.customerId = customerId;
 	}
 
-	public ObjectId get_id() {
-		return _id;
+	public String get_id() {
+		return _id.toString();
 	}
 
 	public void set_id(ObjectId _id) {

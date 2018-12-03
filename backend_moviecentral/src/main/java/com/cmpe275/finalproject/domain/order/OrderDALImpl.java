@@ -1,4 +1,4 @@
-package com.cmpe275.finalproject.order;
+package com.cmpe275.finalproject.domain.order;
 
 import java.util.List;
 
@@ -33,10 +33,10 @@ public class OrderDALImpl implements OrderDAL {
 	    		Aggregation.newAggregation(projectionOperation1,matchOperation,groupOperation,projectionOperation),
 	    		Order.class,OrderStats.class).getMappedResults();
 	}
-
-	public List<OrderStats> getStatsFinanceByYear(int lyear, int lmonth, int cyear, int cmonth) {
-		// TODO Auto-generated method stub
-		MatchOperation matchOperation = getMatchOperationByLast12Months(lyear, lmonth,cyear,cmonth);
+	
+	@Override
+	public List<OrderStats> getStatsFinanceByLast12Months(int lyear, int lmonth) {
+		MatchOperation matchOperation = getMatchOperationByLast12Months(lyear, lmonth);
 	    GroupOperation groupOperation = getGroupOperation();
 	    ProjectionOperation projectionOperation = getProjectOperation();
 	    ProjectionOperation projectionOperation1 = getProjectOperation1();
@@ -51,10 +51,11 @@ public class OrderDALImpl implements OrderDAL {
 	    return Aggregation.match(priceCriteria);
 	} 
 	
-	private MatchOperation getMatchOperationByLast12Months(int lastYear, int lastYearMonth, int currentYear, int currentMonth) {
-	    Criteria priceCriteria = Criteria.where("year").gte(lastYear).and("month").gte(lastYearMonth)
-	    		.and("year").lte(currentYear).and("month").lte(currentMonth);
-	    return Aggregation.match(priceCriteria);
+	private MatchOperation getMatchOperationByLast12Months(int lastYear, int lastYearMonth) {
+	    Criteria priceCriteria1 = Criteria.where("year").gte(lastYear).and("month").gte(lastYearMonth);
+	    Criteria priceCriteria2 = Criteria.where("year").gt(lastYear).and("month").lte(lastYearMonth);
+	    Criteria orCriteria = new Criteria().orOperator(priceCriteria1, priceCriteria2);
+	    return Aggregation.match(orCriteria);
 	} 
 	
 	private GroupOperation getGroupOperation() {
@@ -74,4 +75,6 @@ public class OrderDALImpl implements OrderDAL {
 	        .andExpression("total").as("total");
 
 	}
+
+	
 }
