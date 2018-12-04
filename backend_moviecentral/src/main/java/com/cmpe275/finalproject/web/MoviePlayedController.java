@@ -132,7 +132,7 @@ public class MoviePlayedController {
 			trackMoviePlayed(moviePlayed);
 			return ResponseEntity.ok().build();
 		}else if(movie.getAvailability().equals("PayPerView")) {
-			if(moviePlayed.getOrderId() != null) {
+			if(payload.get("orderId") != null) {
 				trackMoviePlayed(moviePlayed);
 				return ResponseEntity.ok().build();
 			}
@@ -148,7 +148,6 @@ public class MoviePlayedController {
 					badRequest.setTotal(movie.getPrice() / 2);
 				}
 			}
-			badRequest.setTotal(movie.getPrice());
 			badRequest.setSubribed(false);
 			badRequest.setTypeOfMovie(movie.getAvailability());
 			return ResponseEntity.badRequest().body(badRequest);
