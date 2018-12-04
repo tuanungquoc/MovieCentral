@@ -27,7 +27,7 @@ import com.cmpe275.finalproject.domain.movie.MovieDAL;
 import com.cmpe275.finalproject.domain.movie.MovieDALImpl;
 import com.cmpe275.finalproject.domain.movie.MovieRepository;
 import com.cmpe275.finalproject.domain.movieplayed.MoviePlayed;
-import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedBadRequest;
+import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedResponse;
 import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedDAL;
 import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedDALImpl;
 import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedRepository;
@@ -46,13 +46,13 @@ public class MoviePlayedController {
 
 	@Autowired
 	UserProfileRepository userRepository;
-	
+
 	@Autowired
 	MoviePlayedRepository moviePlayedRepository;
-	
+
 	@Autowired
 	MoviePlayedDAL moviePlayedDAL;
-	
+
 	@Bean
 	public MoviePlayedDAL getMoviePlayedDAL() {
 		return new MoviePlayedDALImpl();
@@ -67,21 +67,21 @@ public class MoviePlayedController {
 			//save to DB
 			moviePlayed.setTimePlayed(LocalDateTime.now());
 			moviePlayedRepository.save(moviePlayed);
-	}
+		}
 		//else {
-//			//checking if it has been played within 24 hours or not
-//			LocalDateTime moviePlayedTime = playedRecord.getTimePlayed();
-//			LocalDateTime next24hrs = moviePlayedTime.plusHours(24);
-//			LocalDateTime now = LocalDateTime.now();
-//			if(next24hrs.compareTo(now) > 0) {
-//				//do nothing since it is still within 24 hrs
-//			}else {
-//				//saveTime
-//				playedRecord.set_id(new ObjectId());
-//				playedRecord.setTimePlayed(LocalDateTime.now());
-//				moviePlayedRepository.save(playedRecord);
-//			}
-//		}
+		//			//checking if it has been played within 24 hours or not
+		//			LocalDateTime moviePlayedTime = playedRecord.getTimePlayed();
+		//			LocalDateTime next24hrs = moviePlayedTime.plusHours(24);
+		//			LocalDateTime now = LocalDateTime.now();
+		//			if(next24hrs.compareTo(now) > 0) {
+		//				//do nothing since it is still within 24 hrs
+		//			}else {
+		//				//saveTime
+		//				playedRecord.set_id(new ObjectId());
+		//				playedRecord.setTimePlayed(LocalDateTime.now());
+		//				moviePlayedRepository.save(playedRecord);
+		//			}
+		//		}
 	}
 
 	@RequestMapping(value="/movie/play",method = RequestMethod.POST)
@@ -93,16 +93,18 @@ public class MoviePlayedController {
 		if(movieId == null || customerId == null) {
 			return ResponseEntity.notFound().build();
 		}
-		
+
 		Movie movie = movieRepository.findBy_id(new ObjectId(movieId));
 		UserProfile user = userRepository.findBy_id(new ObjectId(customerId));
 		if(movie == null || user == null)
 		{
 			return ResponseEntity.notFound().build();
 		}
-		
+
 		if(user.getRole().equals("ADMIN")) {
-			return ResponseEntity.ok().build();
+			MoviePlayedResponse okResponse = new MoviePlayedResponse();
+			okResponse.setAllowed(true);
+			return ResponseEntity.ok(okResponse);
 		}
 		MoviePlayed moviePlayed = new MoviePlayed();
 		moviePlayed.set_id(new ObjectId());
@@ -113,31 +115,41 @@ public class MoviePlayedController {
 		if(movie.getAvailability().equals("Free")) {
 			//return 200 and play
 			trackMoviePlayed(moviePlayed);
-			return ResponseEntity.ok().build();
+			MoviePlayedResponse okResponse = new MoviePlayedResponse();
+			okResponse.setAllowed(true);
+			return ResponseEntity.ok(okResponse);
 		}else if(movie.getAvailability().equals("Subcribed")) {
 			if(moviePlayed.getOrderId() != null) {
 				trackMoviePlayed(moviePlayed);
-				return ResponseEntity.ok().build();
+				MoviePlayedResponse okResponse = new MoviePlayedResponse();
+				okResponse.setAllowed(true);
+				return ResponseEntity.ok(okResponse);
 			}
 			//check if the user is still subribal
 			if(user.getNextRenewalDate() == null || user.getNextRenewalDate().compareTo(LocalDateTime.now()) < 0) {
 				//user need to pay for subcription
-				MoviePlayedBadRequest badRequest = new MoviePlayedBadRequest();
+				MoviePlayedResponse badRequest = new MoviePlayedResponse();
+				badRequest.setAllowed(false);
 				badRequest.setMovieId(movie.get_id());
 				badRequest.setTotal(10);
 				badRequest.setSubribed(false);
 				badRequest.setTypeOfMovie(movie.getAvailability());
-				return ResponseEntity.badRequest().body(badRequest);
+				return ResponseEntity.ok(badRequest);
 			}
 			trackMoviePlayed(moviePlayed);
-			return ResponseEntity.ok().build();
+			MoviePlayedResponse okResponse = new MoviePlayedResponse();
+			okResponse.setAllowed(true);
+			return ResponseEntity.ok(okResponse);
 		}else if(movie.getAvailability().equals("PayPerView")) {
 			if(payload.get("orderId") != null) {
 				trackMoviePlayed(moviePlayed);
-				return ResponseEntity.ok().build();
+				MoviePlayedResponse okResponse = new MoviePlayedResponse();
+				okResponse.setAllowed(true);
+				return ResponseEntity.ok(okResponse);
 			}
-			MoviePlayedBadRequest badRequest = new MoviePlayedBadRequest();
+			MoviePlayedResponse badRequest = new MoviePlayedResponse();
 			badRequest.setMovieId(movie.get_id());
+			badRequest.setAllowed(false);
 			//regular user paying full price
 			if(user.getNextRenewalDate() == null )
 				badRequest.setTotal(movie.getPrice());
@@ -150,13 +162,15 @@ public class MoviePlayedController {
 			}
 			badRequest.setSubribed(false);
 			badRequest.setTypeOfMovie(movie.getAvailability());
-			return ResponseEntity.badRequest().body(badRequest);
+			return ResponseEntity.ok(badRequest);
 		}else {
 			trackMoviePlayed(moviePlayed);
-			return ResponseEntity.ok().build();
+			MoviePlayedResponse okResponse = new MoviePlayedResponse();
+			okResponse.setAllowed(true);
+			return ResponseEntity.ok(okResponse);
 		}
 	}
-	
+
 	@RequestMapping(value="/movie/play/byUser/{userId}", method = RequestMethod.GET)
 	public List<MoviePlayed> getHistoryMoviePlayed(@PathVariable("userId") ObjectId userId) {
 
@@ -164,11 +178,11 @@ public class MoviePlayedController {
 		return moviePlayedRepository.findAllMoviePlayedBy(userId, sort);
 
 	}
-	
+
 	@RequestMapping(value="/movie/play/stats/{days}", method = RequestMethod.GET)
 	public List<MoviePlayedStats> getMoviePlayedStats(@PathVariable("days") int days) {
 		return moviePlayedDAL.getStatsMoviePlayedByDays(days);
-		
+
 
 	}
 }

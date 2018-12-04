@@ -1,6 +1,6 @@
 package com.cmpe275.finalproject.domain.movieplayed;
 
-public class MoviePlayedBadRequest {
+public class MoviePlayedResponse {
 	String movieId;
 	
 	double total;
@@ -8,6 +8,17 @@ public class MoviePlayedBadRequest {
 	boolean isSubribed;
 	
 	String typeOfMovie;
+	
+	boolean isAllowed;
+	
+
+	public boolean isAllowed() {
+		return isAllowed;
+	}
+
+	public void setAllowed(boolean isAllowed) {
+		this.isAllowed = isAllowed;
+	}
 
 	public String getMovieId() {
 		return movieId;
