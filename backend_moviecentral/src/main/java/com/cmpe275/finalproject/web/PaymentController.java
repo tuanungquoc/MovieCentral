@@ -26,9 +26,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cmpe275.finalproject.domain.movie.Movie;
+import com.cmpe275.finalproject.domain.movie.MovieRepository;
 import com.cmpe275.finalproject.domain.order.Order;
 import com.cmpe275.finalproject.domain.order.OrderDAL;
 import com.cmpe275.finalproject.domain.order.OrderDALImpl;
+import com.cmpe275.finalproject.domain.order.OrderReponse;
 import com.cmpe275.finalproject.domain.order.OrderRepository;
 import com.cmpe275.finalproject.domain.order.OrderStats;
 import com.cmpe275.finalproject.domain.order.PaymentInfoRepository;
@@ -47,6 +50,9 @@ public class PaymentController {
 	PaymentInfoRepository paymentInfoRepository;
 
 	@Autowired
+	MovieRepository movieRepository;
+	
+	@Autowired
 	OrderDAL orderDAL;
 
 	@Autowired
@@ -61,11 +67,10 @@ public class PaymentController {
 	public ResponseEntity<Object> subcribeControl(@Valid @RequestBody Order order) {
 		if(order.getQuantity() != 0) {
 			//Save payment
-
 			ObjectId cusomterId = new ObjectId(order.getUserId());
 			UserProfile user = userRepository.findBy_id(cusomterId);
 			if(user!=null) {
-				LocalTime midnight = LocalTime.MIDNIGHT;
+				LocalTime midnight = LocalTime.MIDNIGHT.plusHours(23).plusMinutes(59);
 				LocalDate today = LocalDate.now();
 				LocalDateTime todayMidnight = LocalDateTime.of(today, midnight);
 				if(user.getNextRenewalDate() == null ) {
@@ -85,11 +90,43 @@ public class PaymentController {
 						user.setNextRenewalDate(nextRenewalDateLocal.plusMonths(order.getQuantity()));
 					}
 				}
-				userRepository.save(user);
+				
 				//now save the payment
 				order.setCreated(LocalDateTime.now());
 				repository.save(order);
-				return ResponseEntity.ok(order);
+				userRepository.save(user);
+				OrderReponse orderResp = new OrderReponse();
+				orderResp.setOrderId(order.get_id());
+				orderResp.setTypeOfPayment(order.getTypeOfPayment());
+				orderResp.setUserId(user.get_id());
+				return ResponseEntity.ok(orderResp);
+			}else {
+				return ResponseEntity.badRequest().body("Bad request");
+			}
+		}else {
+			return ResponseEntity.badRequest().body("Bad request");
+		}
+	}
+	
+	@RequestMapping(value="/moviepay",method = RequestMethod.POST)
+	public ResponseEntity<Object> moviePayControl(@Valid @RequestBody Order order) {
+		if(order.getQuantity() != 0 || order.getMovieId() == null) {
+			//Save payment
+			ObjectId cusomterId = new ObjectId(order.getUserId());
+			UserProfile user = userRepository.findBy_id(cusomterId);
+			Movie movie = movieRepository.findBy_id(new ObjectId(order.getMovieId()));
+
+			if(movie!=null && movie != null && movie.getAvailability().equals("PayPerView")) {
+				//now save the payment
+				order.setCreated(LocalDateTime.now());
+				repository.save(order);
+				userRepository.save(user);
+				OrderReponse orderResp = new OrderReponse();
+				orderResp.setOrderId(order.get_id());
+				orderResp.setTypeOfPayment(order.getTypeOfPayment());
+				orderResp.setUserId(user.get_id());
+				orderResp.setMovieId(movie.get_id());
+				return ResponseEntity.ok(orderResp);
 			}else {
 				return ResponseEntity.badRequest().body("Bad request");
 			}

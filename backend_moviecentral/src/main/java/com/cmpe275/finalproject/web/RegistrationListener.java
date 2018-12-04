@@ -58,7 +58,7 @@ ApplicationListener<OnRegistrationCompleteEvent> {
 			SimpleMailMessage email = new SimpleMailMessage();
 			email.setTo(recipientAddress);
 			email.setSubject(subject);
-			email.setText("Please access this link:" + "http://localhost:8080" + confirmationUrl);
+			email.setText("Please use this token: " + tokenStr);
 			mailSender.send(email);
 		}catch(Exception e) {
 			throw new UserNotFoundException("User already exists");

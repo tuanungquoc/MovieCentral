@@ -1,5 +1,8 @@
 package com.cmpe275.finalproject.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,10 +25,14 @@ public class UserDetailServiceImpl implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
 	{ 
 		UserProfile currentUser = repository.findByUsername(username);
+		String[] userInfo = {currentUser.getRole(), currentUser.isEnabled()+"", currentUser.getProfileName(),currentUser.get_id()};
 		UserDetails user = new org.springframework.security.core
 				.userdetails.User(username, currentUser.getPassword()
 						, true, true, true, true, 
-						AuthorityUtils.createAuthorityList(currentUser.getRole(),currentUser.isEnabled()+"",currentUser.getProfileName()));
+						AuthorityUtils.createAuthorityList("\"role\" : \"" + currentUser.getRole() + "\"",
+								"\"isEnable\" : " + currentUser.isEnabled()+"",
+								"\"profileName\" :\"" + currentUser.getProfileName() + "\"",
+								"\"userId\":\"" + currentUser.get_id()+"\""));
 		return user;
 	}
 

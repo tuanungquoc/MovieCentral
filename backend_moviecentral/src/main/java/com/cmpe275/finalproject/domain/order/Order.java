@@ -91,7 +91,8 @@ public class Order {
 	}
 
 	public String getMovieId() {
-		return movieId.toString();
+		
+		return this.movieId == null ? "" : this.movieId.toString();
 	}
 
 	public void setMovieId(ObjectId movieId) {
