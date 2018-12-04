@@ -131,7 +131,7 @@ public class MoviePlayedController {
 			}
 			trackMoviePlayed(moviePlayed);
 			return ResponseEntity.ok().build();
-		}else if(movie.getAvailability().equals("PaidPerView")) {
+		}else if(movie.getAvailability().equals("PayPerView")) {
 			if(moviePlayed.getOrderId() != null) {
 				trackMoviePlayed(moviePlayed);
 				return ResponseEntity.ok().build();
