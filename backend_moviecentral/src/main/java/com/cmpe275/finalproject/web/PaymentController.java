@@ -101,10 +101,10 @@ public class PaymentController {
 				orderResp.setUserId(user.get_id());
 				return ResponseEntity.ok(orderResp);
 			}else {
-				return ResponseEntity.badRequest().body("Bad request");
+				return ResponseEntity.badRequest().body("{\"error\":\"Bad Request\",\"status\":400}");
 			}
 		}else {
-			return ResponseEntity.badRequest().body("Bad request");
+			return ResponseEntity.badRequest().body("{\"error\":\"Bad Request\",\"status\":400}");
 		}
 	}
 	
@@ -159,8 +159,7 @@ public class PaymentController {
 	
 	@RequestMapping(value="/admin/finance/yearly", method = RequestMethod.GET)
 	public ResponseEntity<Object> getFinanceByMonth() {
-		int cmonth = LocalDateTime.now().getMonthValue();
-		int cyear = LocalDateTime.now().getYear();
+	
 		int lmonth = LocalDateTime.now().minusMonths(12).getMonthValue();
 		int lyear = LocalDateTime.now().minusMonths(12).getYear();
 		List<OrderStats> orders = orderDAL.getStatsFinanceByLast12Months(lyear,lmonth);

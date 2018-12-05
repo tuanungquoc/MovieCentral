@@ -3,7 +3,7 @@ package com.cmpe275.finalproject.domain.order;
 public class OrderStats {
 	String typeOfPayment;
 	
-	int sum;
+	double sum;
 
 	public String getTypeOfPayment() {
 		return typeOfPayment;
@@ -13,11 +13,11 @@ public class OrderStats {
 		this.typeOfPayment = typeOfPayment;
 	}
 
-	public int getSum() {
+	public double getSum() {
 		return sum;
 	}
 
-	public void setSum(int sum) {
+	public void setSum(double sum) {
 		this.sum = sum;
 	}
 
