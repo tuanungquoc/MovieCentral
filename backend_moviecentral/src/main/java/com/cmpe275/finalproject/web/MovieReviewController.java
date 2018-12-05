@@ -31,6 +31,8 @@ import com.cmpe275.finalproject.domain.moviereview.MovieReviewDAL;
 import com.cmpe275.finalproject.domain.moviereview.MovieReviewDALImpl;
 import com.cmpe275.finalproject.domain.moviereview.MovieReviewRepository;
 import com.cmpe275.finalproject.domain.moviereview.MovieReviewStats;
+import com.cmpe275.finalproject.domain.users.UserProfile;
+import com.cmpe275.finalproject.domain.users.UserProfileRepository;
 import com.cmpe275.finalproject.errorhandling.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
 
@@ -45,6 +47,9 @@ public class MovieReviewController {
 	MovieRepository movieRepository;
 	
 	@Autowired
+	UserProfileRepository userProfileRepository;
+	
+	@Autowired
 	MovieReviewDAL movieReviewDAL;
 
 	@Bean
@@ -53,15 +58,18 @@ public class MovieReviewController {
 	}
 
 	@RequestMapping(value="/review",method = RequestMethod.POST)
-	public MovieReview createReview(@RequestBody MovieReview review) {
+	public ResponseEntity<Object> createReview(@RequestBody MovieReview review) {
 		//checking to see if user already posted a review
 		MovieReview existingReview = repository.findByCustomerIdAndMovieId(new ObjectId(review.getCustomerId()),
 				new ObjectId(review.getMovieId()));
 		if(existingReview != null ) {
-			return null;
+			return ResponseEntity.badRequest().build();
 		}else {
+			//finding customer name
+			UserProfile profile = userProfileRepository.findBy_id(new ObjectId(review.getCustomerId()));
 			review.set_id(ObjectId.get());
 			review.setCreated(new Date());
+			review.setProfileName(profile.getProfileName());
 			repository.save(review);
 			// update numberOfStar of the movie
 			Movie movie = movieRepository.findBy_id(new ObjectId(review.getMovieId()));
@@ -71,7 +79,8 @@ public class MovieReviewController {
 			float ave = ((numberOfStars * numberOfReviewer) + review.getReviewRate())/(numberOfReviewer + 1);
 			movie.setNumberOfStars((int)ave);
 			movieRepository.save(movie);
-			return review;
+			
+			return ResponseEntity.ok().body(review);
 			
 		}
 	}

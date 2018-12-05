@@ -15,6 +15,10 @@ public class MovieReview {
 	
 	public ObjectId customerId;
 	
+	public String profileName;
+	
+	
+
 	public ObjectId movieId;
 	
 	public int reviewRate;
@@ -23,6 +27,13 @@ public class MovieReview {
 	
 	public Date created;
 	
+	public String getProfileName() {
+		return profileName;
+	}
+
+	public void setProfileName(String profileName) {
+		this.profileName = profileName;
+	}
 	public String get_id() {
 		return _id.toString();
 	}
