@@ -63,7 +63,8 @@ public class MovieReviewController {
 		MovieReview existingReview = repository.findByCustomerIdAndMovieId(new ObjectId(review.getCustomerId()),
 				new ObjectId(review.getMovieId()));
 		if(existingReview != null ) {
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.badRequest().body("{\"error\":\"Bad Request\",\"status\":400}");
+			
 		}else {
 			//finding customer name
 			UserProfile profile = userProfileRepository.findBy_id(new ObjectId(review.getCustomerId()));

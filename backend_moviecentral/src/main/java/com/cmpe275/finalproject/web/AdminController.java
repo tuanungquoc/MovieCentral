@@ -34,46 +34,46 @@ import com.cmpe275.finalproject.domain.users.UserProfileStats;
 import com.cmpe275.finalproject.errorhandling.UserNotFoundException;
 
 @RestController
-@RequestMapping("/userprofile")
-public class UserProfileController {
+@RequestMapping
+public class AdminController {
 
 
 	@Autowired
 	UserProfileRepository repository;
 	
-	@Autowired
-	ApplicationEventPublisher eventPublisher;
 	
 	@Autowired
 	UserProfileDAL userProfileDAL;
 
 	@Bean
-	public UserProfileDAL getUserProfileDAL() {
+	public UserProfileDAL getUserProfileDAL1() {
 		return new UserProfileDALImpl();
 	}
-
-
-	@RequestMapping(method = RequestMethod.POST)
-	public UserProfile createProfile(HttpServletRequest request,@Valid @RequestBody UserProfile profile) {
-		profile.set_id(ObjectId.get());
 	
-		String appUrl = request.getContextPath();
-		if(profile.getUsername().contains("sjsu.edu")) {
-			profile.setRole("ADMIN");
+	@RequestMapping(value="/admin/search", method = RequestMethod.POST)
+	public Page<UserProfile> searchUser(@RequestBody Map<String, Object> payload) {
+
+		String keyword = (String) payload.get("search");
+		List<String> keywordList;
+		if(keyword == null) {
+			keywordList = null;
 		}
-		eventPublisher.publishEvent(new OnRegistrationCompleteEvent
-				(profile, request.getLocale(), appUrl));
-	
-		return profile;
+		else {
+			String[] keys = keyword.split(" ");
+			keywordList = Arrays.asList(keys);
+		}
+		int page = (Integer) payload.get("page");
+		int size =   (Integer) payload.get("size");
+		Pageable pageable = new PageRequest(page,size);
+		//checking to see filter is applied
+		
+		return userProfileDAL.searchProfileByKeyWord(keywordList, pageable);
 	}
-
-	@RequestMapping(value="/{id}", method = RequestMethod.GET)
-	public UserProfile getProfileById(@PathVariable("id") ObjectId _id) {
-
-		UserProfile userProfile =  repository.findBy_id(_id);
-		System.out.println(userProfile);
-		if(userProfile != null) return userProfile;
-		throw new UserNotFoundException("id-" + _id);	
+	
+	@RequestMapping(value="/admin/subcribedUser/monthly", method = RequestMethod.GET)
+	public ResponseEntity<Object> getFinanceByMonth(@Valid @RequestParam("year") int year,@Valid @RequestParam("month") int month) {
+		List<UserProfileStats> profileStats = userProfileDAL.getUniqueSubcribedUsersByMonthAndYear(year,month);	
+		return ResponseEntity.ok(profileStats);
 	}
 	
 }

@@ -126,12 +126,12 @@ public class PaymentController {
 				orderResp.setTypeOfPayment(order.getTypeOfPayment());
 				orderResp.setUserId(user.get_id());
 				orderResp.setMovieId(movie.get_id());
-				return ResponseEntity.ok(orderResp);
+				return ResponseEntity.ok().body(orderResp);
 			}else {
-				return ResponseEntity.badRequest().body("Bad request");
+				return ResponseEntity.badRequest().body("{\"error\":\"Bad Request\",\"status\":400}");
 			}
 		}else {
-			return ResponseEntity.badRequest().body("Bad request");
+			return ResponseEntity.badRequest().body("{\"error\":\"Bad Request\",\"status\":400}");
 		}
 	}
 

@@ -7,10 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 
 import com.cmpe275.finalproject.domain.movie.Movie;
+import com.cmpe275.finalproject.domain.order.Order;
+import com.cmpe275.finalproject.domain.order.OrderStats;
 
 public class UserProfileDALImpl implements UserProfileDAL{
 
@@ -52,6 +59,67 @@ public class UserProfileDALImpl implements UserProfileDAL{
 				() -> mongoTemplate.count(query, UserProfile.class));
 
 		return profilePage;
+	}
+
+	
+	@Override
+	public List<UserProfileStats> getUniqueSubcribedUsersByMonthAndYear(int year, int month) {
+		// TODO Auto-generated method stub
+		MatchOperation matchOperation = getMatchOperationByMonthAndYear(year, month);
+	    GroupOperation groupOperation = getGroupOperation();
+	    ProjectionOperation projectionOperation = getProjectOperation();
+	    ProjectionOperation projectionOperation1 = getProjectOperation1();
+
+	    return mongoTemplate.aggregate(
+	    		Aggregation.newAggregation(projectionOperation1,matchOperation,groupOperation,projectionOperation),
+	    		UserProfile.class,UserProfileStats.class).getMappedResults();
+	}
+	
+	@Override
+	public List<UserProfileStats> getUniqueSubcribedUsersLast12Months(int lyear, int lmonth) {
+		MatchOperation matchOperation = getMatchOperationByLast12Months(lyear, lmonth);
+	    GroupOperation groupOperation = getGroupOperation();
+	    ProjectionOperation projectionOperation = getProjectOperation();
+	    ProjectionOperation projectionOperation1 = getProjectOperation1();
+
+	    return mongoTemplate.aggregate(
+	    		Aggregation.newAggregation(projectionOperation1,matchOperation,groupOperation,projectionOperation),
+	    		UserProfile.class,UserProfileStats.class).getMappedResults();
+	}
+	
+	private MatchOperation getMatchOperationByMonthAndYear(int year, int month) {
+	    Criteria priceCriteria1 = Criteria.where("year").is(year).and("month").gte(month);
+	    Criteria priceCriteria2 = Criteria.where("year").gt(year);
+	    Criteria priceCriteria3 = Criteria.where("isSubcribed").is(true);
+
+	    Criteria orCriteria = new Criteria().orOperator(priceCriteria1, priceCriteria2);
+	    Criteria andCriteria = new Criteria().andOperator(priceCriteria3, orCriteria);
+	    return Aggregation.match(andCriteria);
+	} 
+	
+	private MatchOperation getMatchOperationByLast12Months(int lastYear, int lastYearMonth) {
+	    Criteria priceCriteria1 = Criteria.where("year").gte(lastYear).and("month").gte(lastYearMonth);
+	    Criteria priceCriteria2 = Criteria.where("year").gt(lastYear).and("month").lte(lastYearMonth);
+	    Criteria priceCriteria3 = Criteria.where("isSubcribed").is(true);
+
+	    Criteria orCriteria = new Criteria().orOperator(priceCriteria1, priceCriteria2);
+	    Criteria andCriteria = new Criteria().andOperator(priceCriteria3, orCriteria);
+	    return Aggregation.match(andCriteria);
+	} 
+	
+	private GroupOperation getGroupOperation() {
+	    return Aggregation.group("isSubcribed")
+	    		.count().as("numberOfUsers");
+	}
+	
+	private ProjectionOperation getProjectOperation() {
+	    return Aggregation.project("numberOfUsers");
+	}
+
+	private ProjectionOperation getProjectOperation1() {
+	    return Aggregation.project("_id").andExpression("month(nextRenewalDate)").as("month")
+	        .andExpression("year(nextRenewalDate)").as("year")
+	        .andExpression("isSubcribed").as("isSubcribed");
 	}
 
 }
