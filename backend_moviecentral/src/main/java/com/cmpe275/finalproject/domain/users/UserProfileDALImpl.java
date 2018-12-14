@@ -1,5 +1,6 @@
 package com.cmpe275.finalproject.domain.users;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import com.cmpe275.finalproject.domain.movie.Movie;
 import com.cmpe275.finalproject.domain.order.Order;
 import com.cmpe275.finalproject.domain.order.OrderStats;
+
 
 public class UserProfileDALImpl implements UserProfileDAL{
 
@@ -88,22 +90,38 @@ public class UserProfileDALImpl implements UserProfileDAL{
 	}
 	
 	private MatchOperation getMatchOperationByMonthAndYear(int year, int month) {
+	    //check next renewal date
 	    Criteria priceCriteria1 = Criteria.where("year").is(year).and("month").gte(month);
 	    Criteria priceCriteria2 = Criteria.where("year").gt(year);
+	    
+	    //check start subcribing date to make sure the member subcribed on the month you look at
+	    Criteria priceCriteria4 = Criteria.where("startSubcribedYear").is(year).and("startSubcribedMonth").lte(month);
+	    Criteria priceCriteria5 = Criteria.where("startSubcribedYear").lt(year);
+	    
+	    
 	    Criteria priceCriteria3 = Criteria.where("isSubcribed").is(true);
 
-	    Criteria orCriteria = new Criteria().orOperator(priceCriteria1, priceCriteria2);
-	    Criteria andCriteria = new Criteria().andOperator(priceCriteria3, orCriteria);
+	    Criteria orCriteria1 = new Criteria().orOperator(priceCriteria1, priceCriteria2);
+	    Criteria orCriteria2 = new Criteria().orOperator(priceCriteria4, priceCriteria5);
+
+	    Criteria andCriteria = new Criteria().andOperator(priceCriteria3, orCriteria1, orCriteria2);
 	    return Aggregation.match(andCriteria);
 	} 
 	
 	private MatchOperation getMatchOperationByLast12Months(int lastYear, int lastYearMonth) {
-	    Criteria priceCriteria1 = Criteria.where("year").gte(lastYear).and("month").gte(lastYearMonth);
-	    Criteria priceCriteria2 = Criteria.where("year").gt(lastYear).and("month").lte(lastYearMonth);
+		Criteria priceCriteria1 = Criteria.where("startSubcribedYear").gte(lastYear).and("startSubcribedMonth").gte(lastYearMonth);
+	    Criteria priceCriteria2 = Criteria.where("startSubcribedYear").gt(lastYear).and("startSubcribedMonth").lte(lastYearMonth);
+	    
+	    Criteria priceCriteria4 = Criteria.where("startSubcribedYear").lte(lastYear + 1).and("startSubcribedMonth").lte(lastYearMonth);
+	    Criteria priceCriteria5 = Criteria.where("startSubcribedYear").lt(lastYear + 1).and("startSubcribedMonth").gte(lastYearMonth);
+	    
+	    
 	    Criteria priceCriteria3 = Criteria.where("isSubcribed").is(true);
 
-	    Criteria orCriteria = new Criteria().orOperator(priceCriteria1, priceCriteria2);
-	    Criteria andCriteria = new Criteria().andOperator(priceCriteria3, orCriteria);
+	    Criteria orCriteria1 = new Criteria().orOperator(priceCriteria1, priceCriteria2);
+	    Criteria orCriteria2 = new Criteria().orOperator(priceCriteria4, priceCriteria5);
+
+	    Criteria andCriteria = new Criteria().andOperator(priceCriteria3, orCriteria1,orCriteria2);
 	    return Aggregation.match(andCriteria);
 	} 
 	
@@ -119,7 +137,12 @@ public class UserProfileDALImpl implements UserProfileDAL{
 	private ProjectionOperation getProjectOperation1() {
 	    return Aggregation.project("_id").andExpression("month(nextRenewalDate)").as("month")
 	        .andExpression("year(nextRenewalDate)").as("year")
+	        .andExpression("month(startSubcribedDate)").as("startSubcribedMonth")
+	        .andExpression("year(startSubcribedDate)").as("startSubcribedYear")
 	        .andExpression("isSubcribed").as("isSubcribed");
 	}
+
+
+
 
 }

@@ -34,6 +34,9 @@ public class MovieDALImpl implements MovieDAL{
 		if(keywords != null) {
 			for(int i  = 0 ; i < searchAttributes.length ; i++) {
 				for(String keyword: keywords) {
+					if(!keyword.toLowerCase().equals("the") && 
+							!keyword.toLowerCase().equals("a") && 
+							!keyword.toLowerCase().equals("an"))
 					compiledSearchQueryStr.add( "{\""+  searchAttributes[i] + "\": {'$regex' : '" + keyword + "'" + "," +"'$options': 'i'" + "} }");
 				}
 			}

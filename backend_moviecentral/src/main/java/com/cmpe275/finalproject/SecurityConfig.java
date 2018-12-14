@@ -47,11 +47,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	//		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
 	//	}
 	//
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-	
+	@Autowired
+	public PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private UserDetailServiceImpl userDetailsService; 
@@ -88,7 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
 	}
 
 }

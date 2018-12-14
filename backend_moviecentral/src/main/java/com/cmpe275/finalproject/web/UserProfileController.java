@@ -34,7 +34,6 @@ import com.cmpe275.finalproject.domain.users.UserProfileStats;
 import com.cmpe275.finalproject.errorhandling.UserNotFoundException;
 
 @RestController
-@RequestMapping("/userprofile")
 public class UserProfileController {
 
 
@@ -53,13 +52,19 @@ public class UserProfileController {
 	}
 
 
-	@RequestMapping(method = RequestMethod.POST)
-	public UserProfile createProfile(HttpServletRequest request,@Valid @RequestBody UserProfile profile) {
+	@RequestMapping(value="/userprofile",method = RequestMethod.POST)
+	public UserProfile createProfile(HttpServletRequest request,@RequestBody UserProfile profile) {
 		profile.set_id(ObjectId.get());
-	
+		profile.setEnabled(false);
+		profile.setSubcribed(false);
+		profile.setNextRenewalDate(null);
+		profile.setStartSubcribedDate(null);
+		
 		String appUrl = request.getContextPath();
 		if(profile.getUsername().contains("sjsu.edu")) {
 			profile.setRole("ADMIN");
+		}else {
+			profile.setRole("USER");
 		}
 		eventPublisher.publishEvent(new OnRegistrationCompleteEvent
 				(profile, request.getLocale(), appUrl));
@@ -67,7 +72,7 @@ public class UserProfileController {
 		return profile;
 	}
 
-	@RequestMapping(value="/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="/getUserProfile/{id}", method = RequestMethod.GET)
 	public UserProfile getProfileById(@PathVariable("id") ObjectId _id) {
 
 		UserProfile userProfile =  repository.findBy_id(_id);

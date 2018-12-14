@@ -1,6 +1,8 @@
 package com.cmpe275.finalproject.web;
 
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +31,8 @@ public class RegistrationConfirmationController {
 		}else {
 
 			UserProfile userProfile = service.getUserProfile(verificationToken.getToken());
-			userProfile.setEnabled(true); 
+			userProfile.setEnabled(true);
+			userProfile.setStartMemberDate(LocalDateTime.now());
 			verificationToken.setValid(false);
 			service.saveRegisteredUser(userProfile,verificationToken);
 			return ResponseEntity.ok(userProfile);

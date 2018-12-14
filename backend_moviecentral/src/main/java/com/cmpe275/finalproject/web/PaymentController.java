@@ -71,11 +71,14 @@ public class PaymentController {
 			UserProfile user = userRepository.findBy_id(cusomterId);
 			if(user!=null) {
 				LocalTime midnight = LocalTime.MIDNIGHT.plusHours(23).plusMinutes(59);
+				LocalTime startMidNight = LocalTime.MIDNIGHT;
 				LocalDate today = LocalDate.now();
 				LocalDateTime todayMidnight = LocalDateTime.of(today, midnight);
+				LocalDateTime todayStartMidnight = LocalDateTime.of(today, startMidNight);
 				if(user.getNextRenewalDate() == null ) {
 					user.setSubcribed(true);
 					user.setNextRenewalDate(todayMidnight.plusMonths(order.getQuantity()));
+					user.setStartSubcribedDate(todayStartMidnight);
 					//user.setNextRenewalDate(LocalDateTime.now());
 
 				}else {
@@ -159,7 +162,7 @@ public class PaymentController {
 	
 	@RequestMapping(value="/admin/finance/yearly", method = RequestMethod.GET)
 	public ResponseEntity<Object> getFinanceByMonth() {
-	
+		
 		int lmonth = LocalDateTime.now().minusMonths(12).getMonthValue();
 		int lyear = LocalDateTime.now().minusMonths(12).getYear();
 		List<OrderStats> orders = orderDAL.getStatsFinanceByLast12Months(lyear,lmonth);

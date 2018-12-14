@@ -30,6 +30,26 @@ public class UserProfile {
 	
 	private LocalDateTime nextRenewalDate;
 	
+	private LocalDateTime startSubcribedDate;
+	
+	private LocalDateTime startMemberDate;
+	
+	public LocalDateTime getStartMemberDate() {
+		return startMemberDate;
+	}
+
+	public void setStartMemberDate(LocalDateTime startMemberDate) {
+		this.startMemberDate = startMemberDate;
+	}
+
+	public LocalDateTime getStartSubcribedDate() {
+		return startSubcribedDate;
+	}
+
+	public void setStartSubcribedDate(LocalDateTime startSubcribedDate) {
+		this.startSubcribedDate = startSubcribedDate;
+	}
+
 	public boolean isSubcribed() {
 		return isSubcribed;
 	}
@@ -47,15 +67,15 @@ public class UserProfile {
 	}
 
 	
-	public UserProfile(ObjectId _id, String username, String password) {
-		this._id = _id;
-		this.username = username;
-		this.password = password;
-		this.enabled = false;
-		this.isSubcribed = false;
-		this.nextRenewalDate = null;
-		this.role = "USER";
-	}
+//	public UserProfile(ObjectId _id, String username, String password) {
+//		this._id = _id;
+//		this.username = username;
+//		this.password = password;
+//		this.enabled = false;
+//		this.isSubcribed = false;
+//		this.nextRenewalDate = null;
+//		this.role = "USER";
+////	}
 	
 	public String getRole() {
 		return role;

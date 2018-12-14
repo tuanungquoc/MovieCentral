@@ -25,5 +25,9 @@ public class FinalprojectApplication extends SpringBootServletInitializer {
 		logger.info("Hellp Spring Boot");
 	}
 	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 	
 }
