@@ -32,6 +32,8 @@ import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedDAL;
 import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedDALImpl;
 import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedRepository;
 import com.cmpe275.finalproject.domain.movieplayed.MoviePlayedStats;
+import com.cmpe275.finalproject.domain.order.Order;
+import com.cmpe275.finalproject.domain.order.OrderRepository;
 import com.cmpe275.finalproject.domain.users.UserProfile;
 import com.cmpe275.finalproject.domain.users.UserProfileRepository;
 import com.cmpe275.finalproject.errorhandling.UserNotFoundException;
@@ -52,6 +54,9 @@ public class MoviePlayedController {
 
 	@Autowired
 	MoviePlayedDAL moviePlayedDAL;
+
+	@Autowired
+	OrderRepository orderRepository;
 
 	@Bean
 	public MoviePlayedDAL getMoviePlayedDAL() {
@@ -164,10 +169,32 @@ public class MoviePlayedController {
 			badRequest.setTypeOfMovie(movie.getAvailability());
 			return ResponseEntity.ok(badRequest);
 		}else {
-			trackMoviePlayed(moviePlayed);
-			MoviePlayedResponse okResponse = new MoviePlayedResponse();
-			okResponse.setAllowed(true);
-			return ResponseEntity.ok(okResponse);
+			//pay movie
+			//check if the user already paid for the movie
+			Order order = orderRepository.findByUserIdAndMovieId(new ObjectId(customerId), new ObjectId(movieId));
+			if(order == null) {
+				MoviePlayedResponse badRequest = new MoviePlayedResponse();
+				badRequest.setMovieId(movie.get_id());
+				badRequest.setAllowed(false);
+				//regular user paying full price
+				if(user.getNextRenewalDate() == null )
+					badRequest.setTotal(movie.getPrice());
+				else {
+					if(user.getNextRenewalDate().compareTo(LocalDateTime.now()) < 0) {
+						badRequest.setTotal(movie.getPrice());
+					}else {
+						badRequest.setTotal(movie.getPrice() / 2);
+					}
+				}
+				badRequest.setSubribed(false);
+				badRequest.setTypeOfMovie(movie.getAvailability());
+				return ResponseEntity.ok(badRequest);
+			}else {
+				trackMoviePlayed(moviePlayed);
+				MoviePlayedResponse okResponse = new MoviePlayedResponse();
+				okResponse.setAllowed(true);
+				return ResponseEntity.ok(okResponse);
+			}
 		}
 	}
 

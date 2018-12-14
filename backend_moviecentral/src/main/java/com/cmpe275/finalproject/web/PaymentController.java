@@ -119,7 +119,7 @@ public class PaymentController {
 			UserProfile user = userRepository.findBy_id(cusomterId);
 			Movie movie = movieRepository.findBy_id(new ObjectId(order.getMovieId()));
 
-			if(movie!=null && movie != null && movie.getAvailability().equals("PayPerView")) {
+			if(movie!=null && movie != null && (movie.getAvailability().equals("PayPerView") ||movie.getAvailability().equals("Paid")) ) {
 				//now save the payment
 				order.setCreated(LocalDateTime.now());
 				repository.save(order);

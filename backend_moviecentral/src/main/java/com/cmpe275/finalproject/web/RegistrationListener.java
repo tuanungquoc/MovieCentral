@@ -38,6 +38,7 @@ ApplicationListener<OnRegistrationCompleteEvent> {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+
 	
 	@Override
 	public void onApplicationEvent(OnRegistrationCompleteEvent event) {
