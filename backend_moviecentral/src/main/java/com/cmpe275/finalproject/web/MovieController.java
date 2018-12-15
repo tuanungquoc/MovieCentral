@@ -71,6 +71,17 @@ public class MovieController {
 		Map<String, Object> filters = (Map) payload.get("filters");
 		return movieDAL.searchMovieByKeyWord(keywordList, pageable,filters);
 	}
+	
+	@RequestMapping(value="/movie/getByRating", method = RequestMethod.POST)
+	public Page<Movie> getMoviesByRating(@RequestBody Map<String, Object> payload) {
+
+		int page = (Integer) payload.get("page");
+		int size =   (Integer) payload.get("size");
+		Pageable pageable = new PageRequest(page,size);
+		//checking to see filter is applied
+		Map<String, Object> filters = (Map) payload.get("filters");
+		return movieDAL.getAllMoviesByRating( pageable);
+	}
 
 	@RequestMapping(value="/movie/{id}", method = RequestMethod.GET)
 	public Movie getMovieById(@PathVariable("id") ObjectId _id) {

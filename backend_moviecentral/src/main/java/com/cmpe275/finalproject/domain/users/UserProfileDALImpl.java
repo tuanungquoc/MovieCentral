@@ -50,7 +50,8 @@ public class UserProfileDALImpl implements UserProfileDAL{
 		}else{
 			finalQuery = searchQuery;
 		}
-
+		
+		finalQuery =  "{$and:" + "[{\"role\" : \"USER\"},"  + finalQuery +  "]}";
 
 		BasicQuery query = 
 				new BasicQuery(finalQuery);

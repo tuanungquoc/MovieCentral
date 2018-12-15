@@ -9,4 +9,7 @@ import org.springframework.data.domain.Pageable;
 public interface MovieDAL {
 	List<Movie> getAllMovies();
 	Page<Movie> searchMovieByKeyWord(List<String>keywords,Pageable pageable,Map<String,Object>filters);
+	
+	Page<Movie> getAllMoviesByRating(Pageable pageable);
+
 }
